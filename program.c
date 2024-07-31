@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/07/31 13:16:03 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/07/31 17:23:49 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,38 @@
 
 void eating(t_philo *philo, double timestamp_in_ms)
 {
+
+    if (philo->philo == 1 || philo->philo == philo->info->philos)
+    {
+            if ((philo->philo == 1 && (philo->info->forks[0] != 1
+            && philo->info->forks[philo->info->philos - 1] != 1))
+            || (philo->philo == philo->info->philos 
+	            && (philo->info->forks[0] != philo->info->philos
+                && philo->info->forks[philo->info->philos - 1] != philo->info->philos)))
+            {
+				{
+		            philo->info->forks[0] = philo ->philo;
+		            philo->info->forks[philo->info->philos - 1] = philo ->philo;	/* code */
+				}
+            }
+    }
+	else
+	{
+	    philo->info->forks[philo->philo - 1] = philo ->philo;
+	    philo->info->forks[philo->philo - 2] = philo ->philo;
+	}
+	int i = 0;
+	i = 0;
+    while (i < philo->info->philos)
+	{
+		printf("%d ", philo->info->forks[i]);
+		i++;
+	}
+    printf("\n");
+    
+    // usleep(100);
+    
+    
     printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo); // modify the sleep to start from the last meal time (difference) & the begining of the program
     printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
     printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
@@ -36,41 +68,23 @@ void *life(void *philo_num)
     struct timeval current_time;
     double timestamp_in_ms;
 	t_philo *philo;
-
 	philo = (t_philo *)philo_num;
-    // printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-    // printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-    // printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
-    // printf("%f %d is sleeping\n", timestamp_in_ms, philo->philo);
-    // printf("%f %d is thinking\n", timestamp_in_ms, philo->philo);
-    
+	
     // int i = 0;
-    // while (i < 10000)
-    // {
-    if (philo->philo == 1)
-    {
-        philo->total_meals = 9;
-        philo->info->meals++;
-    }
-    else
-        usleep(5);
-    printf("XXXXXXXXXXXXXXXXX %d\n", philo->total_meals);
-    printf("XXXXXXXXXXXXXXXXX %d\n", philo->info->meals);
-
-        gettimeofday(&current_time, NULL);
-        timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
-        eating(philo, timestamp_in_ms);
-        // gettimeofday(&current_time, NULL);
-        // timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
-        sleeping(philo, timestamp_in_ms);
-        // gettimeofday(&current_time, NULL);
-        // timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
-        thinking(philo, timestamp_in_ms);
-        // gettimeofday(&current_time, NULL);
-        // timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
-        printf("%f %d died\n", timestamp_in_ms, philo->philo); //this should be monitord somehow to check for the death of any philo
-    //     i++; 
-    // }
+	// i = 0;
+    // while (i < philo->info->philos)
+	// {
+	// 	printf("%d ", philo->info->forks[i]);
+	// 	i++;
+	// }
+    // printf("\n");
+    
+    gettimeofday(&current_time, NULL);
+    timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
+    eating(philo, timestamp_in_ms);
+    sleeping(philo, timestamp_in_ms);
+    thinking(philo, timestamp_in_ms);
+    printf("%f %d died\n", timestamp_in_ms, philo->philo); //this should be monitord somehow to check for the death of any philo
     // if (philo)
         free(philo);
 	return (NULL);	

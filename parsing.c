@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:11 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/07/29 19:27:26 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/07/31 16:10:25 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 static void info_init(int argc, char**av, t_info *info)
 {
-    info->forks = ft_atoi(av[1]);
+    int i;
+
     info->philos = ft_atoi(av[1]);
     info->t2die = ft_atoi(av[2]);
     info->t2eat = ft_atoi(av[3]);
@@ -23,7 +24,14 @@ static void info_init(int argc, char**av, t_info *info)
         info->meals = ft_atoi(av[5]);
     else
         info->meals = -1;
+    i = 0;
+    while (i < info->philos)
+	{
+        info->forks[i] = 0;
+		i++;
+	}
 }
+
 int parsing(int ac, char **av, t_info *info)
 {
     if (ac != 5 && ac != 6)
@@ -42,15 +50,3 @@ int parsing(int ac, char **av, t_info *info)
         return (0);
     }
 }
-
-// Parsing:
-// 1. Minumum is one, 200 is maximum (number of philosopherss)
-// 2. Your(s) program(s) should take the following arguments:
-//         number_of_philosophers (number of forks)
-//         time_to_die (how long they can survive without eating)
-//         time_to_eat (time it takes for a philosopher to finish one meal)
-//         time_to_sleep (The time a philosopher will spend sleeping)
-//         [number_of_times_each_philosopher_must_eat] (optional)
-//         (all philosophers have eaten at least number_of_times_each_philosopher_must_eat
-//         times, the simulation stops. If not specified, the simulation stops when a philosopher dies.)
-// 3. they should all be bigger than 0 except the number of meals each philo needs to eat (edge case).

@@ -7,11 +7,12 @@
 # include <sys/time.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
 
 typedef struct s_info
 {
     int philos;
-    int forks;
+    int forks[200];
     int t2die;
     int t2eat;
     int t2sleep;
