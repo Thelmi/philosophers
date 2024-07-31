@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:11 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/07/29 00:35:26 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/07/29 19:27:26 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,4 @@ int parsing(int ac, char **av, t_info *info)
 //         [number_of_times_each_philosopher_must_eat] (optional)
 //         (all philosophers have eaten at least number_of_times_each_philosopher_must_eat
 //         times, the simulation stops. If not specified, the simulation stops when a philosopher dies.)
+// 3. they should all be bigger than 0 except the number of meals each philo needs to eat (edge case).

@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 22:22:19 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/07/29 00:46:28 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/07/29 19:52:12 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ int input_parsing(char **str)
             return (0);
         i++;
     }
-    if (ft_atoi(str[1]) > 200) //double check if 200 is the max number of philos or not
+    if (ft_atoi(str[1]) > 200 || ft_atoi(str[1]) == 0
+        || ft_atoi(str[2]) == 0 || ft_atoi(str[3]) == 0
+        || ft_atoi(str[4]) == 0) //double check if 200 is the max number of philos or not
         return (0);
     return (1);
 }
