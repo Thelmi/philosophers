@@ -5,7 +5,7 @@ SRC = input_parsing.c parsing.c philo_utilities.c program.c
 OBJ = $(SRC:.c=.o)
 
 CFLAGS = cc -Wall -Wextra -Werror
-
+# lpthread
 all: $(NAME)
 
 $(NAME): $(OBJ)

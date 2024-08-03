@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/07/31 17:23:49 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/08/04 01:04:52 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,52 @@
 
 void eating(t_philo *philo, double timestamp_in_ms)
 {
-
-    if (philo->philo == 1 || philo->philo == philo->info->philos)
-    {
-            if ((philo->philo == 1 && (philo->info->forks[0] != 1
-            && philo->info->forks[philo->info->philos - 1] != 1))
-            || (philo->philo == philo->info->philos 
-	            && (philo->info->forks[0] != philo->info->philos
-                && philo->info->forks[philo->info->philos - 1] != philo->info->philos)))
-            {
-				{
-		            philo->info->forks[0] = philo ->philo;
-		            philo->info->forks[philo->info->philos - 1] = philo ->philo;	/* code */
-				}
-            }
-    }
-	else
+	
+	if (philo->philo == 1 && (philo->info->forks[0] != 1
+		&& philo->info->forks[philo->info->philos - 1] != 1))
 	{
+		{
+			pthread_mutex_lock(&philo->info->fork_lock[0]);
+			pthread_mutex_lock(&philo->info->fork_lock[philo->info->philos - 1]);
+			philo->info->forks[0] = philo ->philo;
+			philo->info->forks[philo->info->philos - 1] = philo ->philo;
+			printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
+			printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
+            printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
+            int i = 0;
+			i = 0;
+			while (i < philo->info->philos)
+			{
+				printf("%d ", philo->info->forks[i]);
+				i++;
+			}
+            printf("\n");
+			usleep(philo->info->t2eat * 1000);
+			pthread_mutex_unlock(&philo->info->fork_lock[0]);
+			pthread_mutex_unlock(&philo->info->fork_lock[philo->info->philos - 1]);
+		}
+    }
+    else if ((philo->info->forks[philo->philo - 1] != philo-> philo
+		&& philo->info->forks[philo->philo - 2] != philo-> philo))
+	{
+		pthread_mutex_lock(&philo->info->fork_lock[philo->philo - 1]);
+		pthread_mutex_lock(&philo->info->fork_lock[philo->philo - 2]);
 	    philo->info->forks[philo->philo - 1] = philo ->philo;
 	    philo->info->forks[philo->philo - 2] = philo ->philo;
+		int i = 0;
+		i = 0;
+		while (i < philo->info->philos)
+		{
+			printf("%d ", philo->info->forks[i]);
+			i++;
+		}
+        printf("\n");
+		printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo); // modify the sleep to start from the last meal time (difference) & the begining of the program
+		printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
+		printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
+	    usleep(philo->info->t2eat * 1000);
+	    pthread_mutex_unlock(&philo->info->fork_lock[philo->philo - 1]);
+		pthread_mutex_unlock(&philo->info->fork_lock[philo->philo - 2]);
 	}
 	int i = 0;
 	i = 0;
@@ -42,26 +69,27 @@ void eating(t_philo *philo, double timestamp_in_ms)
 		i++;
 	}
     printf("\n");
-    
     // usleep(100);
-    
-    
-    printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo); // modify the sleep to start from the last meal time (difference) & the begining of the program
-    printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-    printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
-    usleep(10);// modify the time to be the required routine time
+    // printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo); // modify the sleep to start from the last meal time (difference) & the begining of the program
+    // printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
+    // printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
+    // usleep(10);// modify the time to be the required routine time
 }
 
 void sleeping(t_philo *philo, double timestamp_in_ms)
 {
+	pthread_mutex_lock(&philo->info->sleep_lock);
     printf("%f %d is sleeping\n", timestamp_in_ms, philo->philo);
-    usleep(10);// modify the time to be the required routine time
+    pthread_mutex_unlock(&philo->info->sleep_lock);
+    usleep(philo->info->t2sleep * 1000);
 }
 
 void thinking(t_philo *philo, double timestamp_in_ms)
 {
+	pthread_mutex_lock(&philo->info->think_lock);
     printf("%f %d is thinking\n", timestamp_in_ms, philo->philo);
-    usleep(10);// modify the time to be the required routine time
+    pthread_mutex_unlock(&philo->info->think_lock);
+    // usleep(philo->info->t2sleep * 1000);
 }
 void *life(void *philo_num)
 {
@@ -78,15 +106,17 @@ void *life(void *philo_num)
 	// 	i++;
 	// }
     // printf("\n");
-    
+
     gettimeofday(&current_time, NULL);
     timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
     eating(philo, timestamp_in_ms);
     sleeping(philo, timestamp_in_ms);
     thinking(philo, timestamp_in_ms);
-    printf("%f %d died\n", timestamp_in_ms, philo->philo); //this should be monitord somehow to check for the death of any philo
-    // if (philo)
+    // printf("%f %d died\n", timestamp_in_ms, philo->philo);
+    if (philo)
+    {
         free(philo);
+    }
 	return (NULL);	
 }
 
@@ -101,9 +131,18 @@ void   initializer(t_philo *philo, t_info *info, int i)
 int    execution(t_info *info)
 {
 	pthread_t threads[info->philos];
-	int i;
     t_philo *philo;
-	
+	int i;
+
+	pthread_mutex_init(&info->think_lock, NULL);
+	pthread_mutex_init(&info->sleep_lock, NULL);
+	pthread_mutex_init(&info->death_lock, NULL);
+	i = 0;
+	while (i < 200)
+	{
+		pthread_mutex_init(&info->fork_lock[i], NULL);
+		i++;
+	}
 	i = 0;
 	while (i < info->philos)
 	{
@@ -126,6 +165,16 @@ int    execution(t_info *info)
 			return (0);
 		i++;
 	}
+	i = 0;
+	// pthread_mutex_destroy(info->fork_lock);
+	while (i < 200)
+	{
+		pthread_mutex_destroy(&info->fork_lock[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&info->think_lock);
+	pthread_mutex_destroy(&info->sleep_lock);
+	pthread_mutex_destroy(&info->death_lock);
 	return (1);
 }
 

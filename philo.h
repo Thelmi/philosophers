@@ -13,9 +13,14 @@ typedef struct s_info
 {
     int philos;
     int forks[200];
+    pthread_mutex_t fork_lock[200];
     int t2die;
     int t2eat;
     int t2sleep;
+    pthread_mutex_t sleep_lock;
+    pthread_mutex_t think_lock;
+    pthread_mutex_t death_lock;
+    
     int meals;
     // int program_starting_time; //this might be of "struct timeval" type instead. We also might do it differntly and record the time differently. I am just writing my current ideas.
 } t_info;
