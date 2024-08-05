@@ -9,6 +9,11 @@
 # include <unistd.h>
 # include <string.h>
 
+
+#define RED "\033[31m"
+#define CYAN "\033[36m"
+#define RESET "\033[0m"
+    
 typedef struct s_info
 {
     int philos;

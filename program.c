@@ -6,13 +6,21 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/08/05 01:32:12 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/08/05 15:42:55 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void eating(t_philo *philo, double timestamp_in_ms)
+long long time_now(void)
+{
+	struct timeval	now;
+
+	gettimeofday(&now, NULL);
+	return ((now.tv_sec * 1000LL) + (now.tv_usec / 1000));
+}
+
+void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
 	while (1)
 	{
@@ -23,11 +31,15 @@ void eating(t_philo *philo, double timestamp_in_ms)
 			{
 				pthread_mutex_lock(&philo->info->fork_lock[0]);
 				pthread_mutex_lock(&philo->info->fork_lock[philo->info->philos - 1]);
+				
 				philo->info->forks[0] = 1;
 				philo->info->forks[philo->info->philos - 1] = 1;
-				printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-				printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-				printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
+				timestamp_in_ms = time_now() - time_bc;
+				printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
+				timestamp_in_ms = time_now() - time_bc;
+				printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
+				timestamp_in_ms = time_now() - time_bc;
+				printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
 				// int i = 0;
 				// i = 0;
 				// while (i < philo->info->philos)
@@ -58,9 +70,12 @@ void eating(t_philo *philo, double timestamp_in_ms)
 			// 	i++;
 			// }
 			// printf("\n");
-			printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo); // modify the sleep to start from the last meal time (difference) & the begining of the program
-			printf("%f %d has taken a fork\n", timestamp_in_ms, philo->philo);
-			printf("%f %d is eating\n", timestamp_in_ms, philo->philo);
+			timestamp_in_ms = time_now() - time_bc;
+			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET); // modify the sleep to start from the last meal time (difference) & the begining of the program
+			timestamp_in_ms = time_now() - time_bc;
+			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
+			timestamp_in_ms = time_now() - time_bc;
+			printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
 			usleep(philo->info->t2eat * 1000);
 			printf("blsa7a %d\n", philo->philo);
 			pthread_mutex_unlock(&philo->info->fork_lock[philo->philo - 1]);
@@ -78,36 +93,55 @@ void eating(t_philo *philo, double timestamp_in_ms)
     // printf("\n");
 }
 
-void sleeping(t_philo *philo, double timestamp_in_ms)
+void sleeping(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
 	pthread_mutex_lock(&philo->info->sleep_lock);
-    printf("%f %d is sleeping\n", timestamp_in_ms, philo->philo);
+	timestamp_in_ms = time_now() - time_bc;
+    printf("%s%d %s%d %sis sleeping\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
     pthread_mutex_unlock(&philo->info->sleep_lock);
     usleep(philo->info->t2sleep * 1000);
 }
 
-void thinking(t_philo *philo, double timestamp_in_ms)
+void thinking(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
 	pthread_mutex_lock(&philo->info->think_lock);
-    printf("%f %d is thinking\n", timestamp_in_ms, philo->philo);
+	timestamp_in_ms = time_now() - time_bc;
+    printf("%s%d %s%d %sis thinking\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
     pthread_mutex_unlock(&philo->info->think_lock);
 }
 
 void *life(void *philo_num)
 {
-    struct timeval current_time;
-    double timestamp_in_ms;
+    // struct timeval current_time;
+    long long timestamp_in_ms;
 	t_philo *philo;
 	philo = (t_philo *)philo_num;
 
-    gettimeofday(&current_time, NULL);
-    timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
+	
+    // gettimeofday(&current_time, NULL);
+    // timestamp_in_ms = current_time.tv_sec * 1000 + (current_time.tv_usec) / 1000;
 	int loop = 0;
+	// int flag = 0;
+	long long time_bc = 0;
+	
+	timestamp_in_ms = 0;
+	time_bc = time_now();
 	while (loop < 5)
 	{
-		eating(philo, timestamp_in_ms);
-		sleeping(philo, timestamp_in_ms);
-		thinking(philo, timestamp_in_ms);
+		// timestamp_in_ms = time_now() - time_bc;
+		// if (!flag)
+		// {
+		// 	timestamp_in_ms = 0;	
+		// 	time_bc = time_now();
+		// 	flag = 1;
+		// }
+		// else
+		// 	timestamp_in_ms = time_now() - time_bc;
+		eating(philo, timestamp_in_ms, time_bc);
+		// timestamp_in_ms = time_now() - time_bc;
+		sleeping(philo, timestamp_in_ms, time_bc);
+		// timestamp_in_ms = time_now() - time_bc;
+		thinking(philo, timestamp_in_ms, time_bc);
 		loop++;
 	}
     // printf("%f %d died\n", timestamp_in_ms, philo->philo);
@@ -176,7 +210,7 @@ int main(int ac, char **av)
     t_info info;
     
     if (!(parsing(ac, av, &info)))
-        return (1);   
+        return (1);
     if (!(execution(&info)))
         return (1);
     return (0);
@@ -188,6 +222,7 @@ int main(int ac, char **av)
 // correct time printing
 
 
+// fix printing time in the lab. Make sure it prints the correct time based on what the philo is doing. Check if the philo is doing the tasks at the expected/required time
 
 
 
