@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/08/05 15:42:55 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/08/06 22:29:48 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,13 @@ long long time_now(void)
 	gettimeofday(&now, NULL);
 	return ((now.tv_sec * 1000LL) + (now.tv_usec / 1000));
 }
-
+// long long when_ate(t_philo *philo)
+// {
+// 	if ()
+// 	{
+	
+// 	}
+// }
 void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
 	while (1)
@@ -40,6 +46,7 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 				printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
 				timestamp_in_ms = time_now() - time_bc;
 				printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
+				
 				// int i = 0;
 				// i = 0;
 				// while (i < philo->info->philos)
@@ -48,7 +55,13 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 				// 	i++;
 				// }
 				// printf("\n");
-				usleep(philo->info->t2eat * 1000);
+				// usleep(philo->info->t2eat * 1000);
+			int i = 0;
+			while(i < philo->info->t2eat * 1000)
+			{
+				usleep(150);
+				i += 150;
+			}
 				printf("blsa7a %d\n", philo->philo);
 				pthread_mutex_unlock(&philo->info->fork_lock[0]);
 				pthread_mutex_unlock(&philo->info->fork_lock[philo->info->philos - 1]);
@@ -76,7 +89,13 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
 			timestamp_in_ms = time_now() - time_bc;
 			printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
-			usleep(philo->info->t2eat * 1000);
+			// usleep(philo->info->t2eat * 1000);
+			int i = 0;
+			while(i < philo->info->t2eat * 1000)
+			{
+				usleep(150);
+				i += 150;
+			}
 			printf("blsa7a %d\n", philo->philo);
 			pthread_mutex_unlock(&philo->info->fork_lock[philo->philo - 1]);
 			pthread_mutex_unlock(&philo->info->fork_lock[philo->philo - 2]);
@@ -100,6 +119,12 @@ void sleeping(t_philo *philo, double timestamp_in_ms, long long time_bc)
     printf("%s%d %s%d %sis sleeping\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
     pthread_mutex_unlock(&philo->info->sleep_lock);
     usleep(philo->info->t2sleep * 1000);
+    int i = 0;
+	while(i < philo->info->t2eat * 1000)
+	{
+		usleep(150);
+		i += 150;
+	}
 }
 
 void thinking(t_philo *philo, double timestamp_in_ms, long long time_bc)
@@ -148,7 +173,8 @@ void *life(void *philo_num)
 	if (philo)
 	{
 		free(philo);
-    }
+	}
+
 	return (NULL);	
 }
 

@@ -25,6 +25,7 @@ typedef struct s_info
     pthread_mutex_t sleep_lock;
     pthread_mutex_t think_lock;
     pthread_mutex_t death_lock;
+    int dead;
     
     int meals;
     // int program_starting_time; //this might be of "struct timeval" type instead. We also might do it differntly and record the time differently. I am just writing my current ideas.
