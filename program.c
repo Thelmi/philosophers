@@ -6,7 +6,7 @@
 /*   By: mrhelmy <mrhelmy@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/08/06 22:29:48 by mrhelmy          ###   ########.fr       */
+/*   Updated: 2024/08/07 00:14:56 by mrhelmy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ long long time_now(void)
 	
 // 	}
 // }
-void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
+int eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
+	int i = 0;
+	int death = 0;
 	while (1)
 	{
 		// printf("xxx %d\n", philo->philo);
@@ -46,7 +48,7 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 				printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
 				timestamp_in_ms = time_now() - time_bc;
 				printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
-				
+				philo->last_meal = time_now() - time_bc;
 				// int i = 0;
 				// i = 0;
 				// while (i < philo->info->philos)
@@ -56,10 +58,15 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 				// }
 				// printf("\n");
 				// usleep(philo->info->t2eat * 1000);
-			int i = 0;
 			while(i < philo->info->t2eat * 1000)
 			{
 				usleep(150);
+				if ((time_now() - time_bc) - philo->last_meal > philo->info->t2die)
+					{
+						death = 1;
+						 printf("%f %d died\n", timestamp_in_ms, philo->philo);
+						return (0);
+					}
 				i += 150;
 			}
 				printf("blsa7a %d\n", philo->philo);
@@ -94,6 +101,14 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 			while(i < philo->info->t2eat * 1000)
 			{
 				usleep(150);
+				if ((time_now() - time_bc) - philo->last_meal > philo->info->t2die)
+				{
+					death = 1;
+					printf("%f %d died\n", timestamp_in_ms, philo->philo);
+					return (death);
+				}
+				if (death == 1)
+					return (death);
 				i += 150;
 			}
 			printf("blsa7a %d\n", philo->philo);
@@ -110,10 +125,12 @@ void eating(t_philo *philo, double timestamp_in_ms, long long time_bc)
 	// 	i++;
 	// }
     // printf("\n");
+    return (death);
 }
 
-void sleeping(t_philo *philo, double timestamp_in_ms, long long time_bc)
+int sleeping(t_philo *philo, double timestamp_in_ms, long long time_bc)
 {
+	int death = 0;
 	pthread_mutex_lock(&philo->info->sleep_lock);
 	timestamp_in_ms = time_now() - time_bc;
     printf("%s%d %s%d %sis sleeping\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
@@ -123,16 +140,35 @@ void sleeping(t_philo *philo, double timestamp_in_ms, long long time_bc)
 	while(i < philo->info->t2eat * 1000)
 	{
 		usleep(150);
+		if ((time_now() - time_bc) - philo->last_meal > philo->info->t2die)
+		{
+			death = 1;
+			printf("%f %d died\n", timestamp_in_ms, philo->philo);
+			return (death);
+		}
+		if (death == 1)
+			return (death);
 		i += 150;
 	}
+	return (death);
 }
 
-void thinking(t_philo *philo, double timestamp_in_ms, long long time_bc)
-{
+int thinking(t_philo *philo, double timestamp_in_ms, long long time_bc)
+{   
+	int death = 0;
 	pthread_mutex_lock(&philo->info->think_lock);
 	timestamp_in_ms = time_now() - time_bc;
     printf("%s%d %s%d %sis thinking\n", CYAN, (int)timestamp_in_ms, RED, philo->philo, RESET);
     pthread_mutex_unlock(&philo->info->think_lock);
+    if ((time_now() - time_bc) - philo->last_meal > philo->info->t2die)
+		{
+			death = 1;
+			printf("%f %d died\n", timestamp_in_ms, philo->philo);
+			return (death);
+		}
+		if (death == 1)
+			return (death);
+	return (death);
 }
 
 void *life(void *philo_num)
@@ -162,11 +198,14 @@ void *life(void *philo_num)
 		// }
 		// else
 		// 	timestamp_in_ms = time_now() - time_bc;
-		eating(philo, timestamp_in_ms, time_bc);
+		if (eating(philo, timestamp_in_ms, time_bc))
+			return (NULL);
 		// timestamp_in_ms = time_now() - time_bc;
-		sleeping(philo, timestamp_in_ms, time_bc);
+		if (sleeping(philo, timestamp_in_ms, time_bc))
+			return (NULL);
 		// timestamp_in_ms = time_now() - time_bc;
-		thinking(philo, timestamp_in_ms, time_bc);
+		if (thinking(philo, timestamp_in_ms, time_bc))
+			return (NULL);
 		loop++;
 	}
     // printf("%f %d died\n", timestamp_in_ms, philo->philo);
