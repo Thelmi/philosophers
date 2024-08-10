@@ -24,6 +24,8 @@ static void info_init(int argc, char**av, t_info *info)
         info->meals = ft_atoi(av[5]);
     else
         info->meals = -1;
+    info->time_bc = 0; //taha
+    info->dead = 0; //taha
     i = 0;
     while (i < info->philos)
 	{

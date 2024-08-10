@@ -9,7 +9,7 @@ CFLAGS = cc -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CFLAGS) $(OBJ) -o $(NAME)
+	$(CFLAGS) $(OBJ) -o $(NAME) -lpthread
 
 %.o:%.c
 	$(CFLAGS) -c $< -o $@

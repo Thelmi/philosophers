@@ -17,6 +17,7 @@
 typedef struct s_info
 {
     int philos;
+    long long time_bc;
     int forks[200];
     pthread_mutex_t fork_lock[200];
     int t2die;
@@ -36,6 +37,7 @@ typedef struct s_philo
     t_info  *info;
     int     philo;
     int     last_meal;
+    int     started_sleep; //I added this to remove i from the meals time counter
     int     total_meals;
 } t_philo;
 
