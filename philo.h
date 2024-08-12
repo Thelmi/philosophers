@@ -23,9 +23,10 @@ typedef struct s_info
     int t2die;
     int t2eat;
     int t2sleep;
-    pthread_mutex_t sleep_lock;
-    pthread_mutex_t think_lock;
+    //pthread_mutex_t sleep_lock;
+    //pthread_mutex_t think_lock;
     pthread_mutex_t death_lock;
+    pthread_mutex_t print_lock;
     int dead;
     
     int meals;

@@ -31,16 +31,19 @@ int death_check(t_philo **philo, double timestamp_in_ms)
 			usleep(150);
 		}
 		timestamp_in_ms = time_now() - (*philo)->info->time_bc;
+		pthread_mutex_lock(&(*philo)->info->print_lock);
 		printf("%d %d died\n", (int)timestamp_in_ms, (*philo)->philo);
+		pthread_mutex_unlock(&(*philo)->info->print_lock);
 		return (1);
 	}
+	pthread_mutex_lock(&(*philo)->info->death_lock);
 	if ((*philo)->info->dead == 1)
 	{
-		// pthread_mutex_unlock(&(*philo)->info->death_lock);
+		pthread_mutex_unlock(&(*philo)->info->death_lock);
 		return (1);
 	}
-	// pthread_mutex_unlock(&(*philo)->info->death_lock);
-	if ((time_now() - (*philo)->info->time_bc) - (*philo)->last_meal > (*philo)->info->t2die)
+	pthread_mutex_unlock(&(*philo)->info->death_lock);
+	if ((time_now() - (*philo)->info->time_bc) - (*philo)->last_meal >= (*philo)->info->t2die) //added =
 	{
 		pthread_mutex_lock(&(*philo)->info->death_lock);
 		if ((*philo)->info->dead == 1)
@@ -51,7 +54,9 @@ int death_check(t_philo **philo, double timestamp_in_ms)
 		(*philo)->info->dead = 1;
 		pthread_mutex_unlock(&(*philo)->info->death_lock);
 		timestamp_in_ms = time_now() - (*philo)->info->time_bc;
+		pthread_mutex_lock(&(*philo)->info->print_lock);
 		printf("%d %d died\n", (int)timestamp_in_ms, (*philo)->philo);
+		pthread_mutex_unlock(&(*philo)->info->print_lock);
 		return (1);
 	}
 	return (0);
@@ -64,18 +69,20 @@ int eating(t_philo **philo, double timestamp_in_ms)
 
 	while (1)
 	{
-		if (death_check(philo, timestamp_in_ms)) //muna
+		if (death_check(philo, timestamp_in_ms))
 			return (1);
 		if ((*philo)->philo == 1)
 			philo_index = (*philo)->info->philos - 1;
 		else
 			philo_index = (*philo)->philo - 2;
+		pthread_mutex_lock(&(*philo)->info->fork_lock[philo_index]);
+		pthread_mutex_lock(&(*philo)->info->fork_lock[(*philo)->philo - 1]);
 		if (((*philo)->info->forks[(*philo)->philo - 1] != (*philo)-> philo
 			&& (*philo)->info->forks[philo_index] != (*philo)-> philo))
 		{
-			pthread_mutex_lock(&(*philo)->info->fork_lock[philo_index]);
+			// pthread_mutex_lock(&(*philo)->info->fork_lock[philo_index]);
 			(*philo)->info->forks[philo_index] = (*philo)->philo;
-			pthread_mutex_lock(&(*philo)->info->fork_lock[(*philo)->philo - 1]);
+			// pthread_mutex_lock(&(*philo)->info->fork_lock[(*philo)->philo - 1]);
 			(*philo)->info->forks[(*philo)->philo - 1] = (*philo)->philo;
 			if (death_check(philo, timestamp_in_ms))
 			{
@@ -84,9 +91,11 @@ int eating(t_philo **philo, double timestamp_in_ms)
 				return (1);
 			}
 			timestamp_in_ms = time_now() - (*philo)->info->time_bc;
-			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET); // modify the sleep to start from the last meal time (difference) & the begining of the program
+			pthread_mutex_lock(&(*philo)->info->print_lock);
+			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
 			printf("%s%d %s%d %shas taken a fork\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
 			printf("%s%d %s%d %sis eating\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
+			pthread_mutex_unlock(&(*philo)->info->print_lock);
 			started_meal = time_now() - (*philo)->info->time_bc;
 			while((int)((time_now() - (*philo)->info->time_bc) - started_meal) < ((*philo)->info->t2eat))
 			{
@@ -103,12 +112,16 @@ int eating(t_philo **philo, double timestamp_in_ms)
 			pthread_mutex_unlock(&(*philo)->info->fork_lock[philo_index]);
 			pthread_mutex_unlock(&(*philo)->info->fork_lock[(*philo)->philo - 1]);
 			if (death_check(philo, timestamp_in_ms))
-			{ //muna
+			{
 				return (1);
 			}
-			printf("%s%d blsa7a %d\n", CYAN, (int)timestamp_in_ms, (*philo)->philo); //muna
+			pthread_mutex_lock(&(*philo)->info->print_lock);
+			printf("%s%d blsa7a %d\n", CYAN, (int)timestamp_in_ms, (*philo)->philo);
+			pthread_mutex_unlock(&(*philo)->info->print_lock);
 			break ;
 		}
+		pthread_mutex_unlock(&(*philo)->info->fork_lock[philo_index]);
+		pthread_mutex_unlock(&(*philo)->info->fork_lock[(*philo)->philo - 1]);
 	}
 	if (death_check(philo, timestamp_in_ms))
 		return (1);
@@ -118,10 +131,12 @@ int eating(t_philo **philo, double timestamp_in_ms)
 
 int sleeping(t_philo **philo, double timestamp_in_ms)
 {
-	if (death_check(philo, timestamp_in_ms)) //muna
+	if (death_check(philo, timestamp_in_ms))
 		return (1);
 	timestamp_in_ms = time_now() - (*philo)->info->time_bc;
+	pthread_mutex_lock(&(*philo)->info->print_lock);
     printf("%s%d %s%d %sis sleeping\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
+	pthread_mutex_unlock(&(*philo)->info->print_lock);
 	(*philo)->started_sleep = time_now() - (*philo)->info->time_bc;
     while((time_now() - (*philo)->info->time_bc) - (*philo)->started_sleep < ((*philo)->info->t2sleep))
 	{
@@ -129,19 +144,21 @@ int sleeping(t_philo **philo, double timestamp_in_ms)
 		if (death_check(philo, timestamp_in_ms))
 			return (1);
 	}
-	if (death_check(philo, timestamp_in_ms)) //muna
-		return (1);
+	// if (death_check(philo, timestamp_in_ms))
+	// 	return (1);
 	return (0);
 }
 
 int thinking(t_philo **philo, double timestamp_in_ms)
 {   
 	timestamp_in_ms = time_now() - (*philo)->info->time_bc;
-	if (death_check(philo, timestamp_in_ms)) // muna
-		return (1);
-    printf("%s%d %s%d %sis thinking\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
 	if (death_check(philo, timestamp_in_ms))
 		return (1);
+	pthread_mutex_lock(&(*philo)->info->print_lock);
+    printf("%s%d %s%d %sis thinking\n", CYAN, (int)timestamp_in_ms, RED, (*philo)->philo, RESET);
+	pthread_mutex_unlock(&(*philo)->info->print_lock);
+	// if (death_check(philo, timestamp_in_ms))
+	// 	return (1);
 	return (0);
 }
 
@@ -149,33 +166,39 @@ void *life(void *philo_num)
 {
     long long timestamp_in_ms;
 	t_philo *philo;
-	// int	meals = 0;
 
 	philo = (t_philo *)philo_num;
 	timestamp_in_ms = 0;
-	// int loop = 0; //make this loop infinite
 	if (philo->info->philos != 1 && philo->philo % 2 == 1)
 	{
 		// printf("philo num : %d\n", philo->philo);
 		usleep (1000); //double check if this time delay is good in the imacs (you could need more or less)
 	}
-	// else
-	// 	printf("NOT philo num : %d\n", philo->philo);
-	// if (philo->info->meals != -1)
-	// 	meals = philo->info->meals;
 	int i = 0;
 	if (philo->info->meals != -1)
 	{
 		while (i < philo->info->meals)
 		{
 			if (eating(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 			if (i == philo->info->meals - 1)
 				break ;
 			if (sleeping(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 			if (thinking(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 			i++;
 		}
 	}
@@ -184,17 +207,27 @@ void *life(void *philo_num)
 		while (1)
 		{
 			if (eating(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 			if (sleeping(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 			if (thinking(&philo, timestamp_in_ms))
+			{
+				if (philo)
+					free(philo);
 				return (NULL);
+			}
 		}
 	}
 	if (philo)
-	{
 		free(philo);
-	}
 	return (NULL);	
 }
 
@@ -212,9 +245,8 @@ int    execution(t_info *info)
     t_philo *philo;
 	int i;
 
-	// pthread_mutex_init(&info->think_lock, NULL);
-	// pthread_mutex_init(&info->sleep_lock, NULL);
 	pthread_mutex_init(&info->death_lock, NULL);
+	pthread_mutex_init(&info->print_lock, NULL);
 	i = 0;
 	info->time_bc = time_now();
 	while (i < 200)
@@ -246,9 +278,8 @@ int    execution(t_info *info)
 		pthread_mutex_destroy(&info->fork_lock[i]);
 		i++;
 	}
-	// pthread_mutex_destroy(&info->think_lock);
-	// pthread_mutex_destroy(&info->sleep_lock);
 	pthread_mutex_destroy(&info->death_lock);
+	pthread_mutex_destroy(&info->print_lock);
 	return (1);
 }
 
@@ -258,7 +289,7 @@ int main(int ac, char **av)
     
     if (!(parsing(ac, av, &info)))
         return (1);
-    if (!(execution(&info))) // return 0 if false
+    if (!(execution(&info)))
         return (1);
     return (0);
 }
