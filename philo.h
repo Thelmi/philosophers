@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: thelmy <thelmy@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/12 19:00:09 by thelmy            #+#    #+#             */
+/*   Updated: 2024/08/12 19:00:09 by thelmy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #ifndef PHILO_H
 # define PHILO_H
@@ -16,20 +28,20 @@
     
 typedef struct s_info
 {
-    int philos;
-    long long time_bc;
-    int forks[200];
-    pthread_mutex_t fork_lock[200];
-    int t2die;
-    int t2eat;
-    int t2sleep;
+    int philos; // NO
+    long long time_bc; // NO
+    int forks[200]; // move on
+    pthread_mutex_t fork_lock[200]; // move on
+    int t2die; // NO
+    int t2eat; // NO
+    int t2sleep; // NO
     //pthread_mutex_t sleep_lock;
     //pthread_mutex_t think_lock;
-    pthread_mutex_t death_lock;
-    pthread_mutex_t print_lock;
-    int dead;
-    
-    int meals;
+    pthread_mutex_t death_lock; // Yes, good
+    pthread_mutex_t print_lock; // Yes, good
+    int dead; // yes, good 
+
+    int meals; // yes, good
     // int program_starting_time; //this might be of "struct timeval" type instead. We also might do it differntly and record the time differently. I am just writing my current ideas.
 } t_info;
 
