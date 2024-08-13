@@ -31,7 +31,6 @@ int	ft_atoi(const char *str)
 	}
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-
 		result = (result * 10) + (str[i] - '0');
 		i++;
 	}
@@ -40,14 +39,14 @@ int	ft_atoi(const char *str)
 
 int	ft_isnum(char *str)
 {
-    int	i;
+	int	i;
 
 	i = 0;
-    while (str[i])
-    {
+	while (str[i])
+	{
 		if (!(str[i] >= '0' && str[i] <= '9'))
-    		return (0);
+			return (0);
 		i++;
-    }
-    	return (1);
+	}
+	return (1);
 }

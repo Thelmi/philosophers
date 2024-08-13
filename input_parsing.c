@@ -12,20 +12,20 @@
 
 #include "philo.h"
 
-int input_parsing(char **str)
+int	input_parsing(char **str)
 {
-    int i;
+	int	i;
 
-    i = 1;
-    while (str[i])
-    {
-        if (ft_isnum(str[i]) == 0)
-            return (0);
-        i++;
-    }
-    if (ft_atoi(str[1]) > 200 || ft_atoi(str[1]) == 0
-        || ft_atoi(str[2]) == 0 || ft_atoi(str[3]) == 0
-        || ft_atoi(str[4]) == 0) //double check if 200 is the max number of philos or not
-        return (0);
-    return (1);
+	i = 1;
+	while (str[i])
+	{
+		if (ft_isnum(str[i]) == 0)
+			return (0);
+		i++;
+	}
+	if (ft_atoi(str[1]) > 200 || ft_atoi(str[1]) == 0
+		|| ft_atoi(str[2]) == 0 || ft_atoi(str[3]) == 0
+		|| ft_atoi(str[4]) == 0)
+		return (0);
+	return (1);
 }
