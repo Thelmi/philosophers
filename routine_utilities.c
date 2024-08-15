@@ -6,7 +6,7 @@
 /*   By: thelmy <thelmy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/08/15 00:52:53 by thelmy           ###   ########.fr       */
+/*   Updated: 2024/08/15 17:54:25 by thelmy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	one_philo(t_philo **philo, double timestamp_in_ms)
 	long long	started_meal;
 
 	started_meal = time_now() - (*philo)->info->time_bc;
+	printf("%s%d %s%d %shas taken a fork\n", CYAN,
+		(int)timestamp_in_ms, RED, (*philo)->philo, RESET);
 	while ((int)((time_now() - (*philo)->info->time_bc)
 		- started_meal) < ((*philo)->info->t2die))
 	{
@@ -47,6 +49,7 @@ int	dead_philo(t_philo **philo, double timestamp_in_ms)
 	}
 	(*philo)->info->dead = 1;
 	pthread_mutex_unlock(&(*philo)->info->death_lock);
+	usleep(1000);
 	timestamp_in_ms = time_now() - (*philo)->info->time_bc;
 	pthread_mutex_lock(&(*philo)->info->print_lock);
 	printf("%d %d died\n", (int)timestamp_in_ms, (*philo)->philo);

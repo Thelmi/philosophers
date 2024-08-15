@@ -6,7 +6,7 @@
 /*   By: thelmy <thelmy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 19:59:17 by mrhelmy           #+#    #+#             */
-/*   Updated: 2024/08/15 01:56:37 by thelmy           ###   ########.fr       */
+/*   Updated: 2024/08/15 16:29:54 by thelmy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ int	sleeping(t_philo **philo, double timestamp_in_ms)
 
 int	thinking(t_philo **philo, double timestamp_in_ms)
 {
-	timestamp_in_ms = time_now() - (*philo)->info->time_bc;
 	if (death_check(philo, timestamp_in_ms))
 		return (1);
+	timestamp_in_ms = time_now() - (*philo)->info->time_bc;
 	pthread_mutex_lock(&(*philo)->info->print_lock);
 	printf("%s%d %s%d %sis thinking\n", CYAN,
 		(int)timestamp_in_ms, RED, (*philo)->philo, RESET);
