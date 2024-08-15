@@ -48,9 +48,25 @@ typedef struct s_philo
 	int		total_meals;
 }	t_philo;
 
-int	ft_isnum(char *str);
-int	ft_atoi(const char *str);
-int	input_parsing(char **str);
-int	parsing(int ac, char **av, t_info *info);
+void		initializer(t_philo *philo, t_info *info, int i);
 
+int			starting_threads(t_info *info,
+				pthread_t threads[200], t_philo *philo);
+
+int			execution(t_info *info);
+long long	time_now(void);
+int			one_philo(t_philo **philo, double timestamp_in_ms);
+int			dead_philo(t_philo **philo, double timestamp_in_ms);
+int			death_check(t_philo **philo, double timestamp_in_ms);
+
+void		*life(void *philo_num);
+int			specified_meals(t_philo *philo, long long timestamp_in_ms);
+int			sleeping(t_philo **philo, double timestamp_in_ms);
+int			thinking(t_philo **philo, double timestamp_in_ms);
+
+int			ft_isnum(char *str);
+int			ft_atoi(const char *str);
+int			input_parsing(char **str);
+int			parsing(int ac, char **av, t_info *info);
+int			eating(t_philo **philo, double timestamp_in_ms);
 #endif 
